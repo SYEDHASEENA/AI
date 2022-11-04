@@ -1,45 +1,54 @@
-start,end =[3,3,1],[0,0,0]
-def do_action(state,action):
-    if state[2] == 1:
-        return [state[i] - action[i] for i in range(3)]
-    else:
-        return [state[i] + action[i] for i in range(3)]
-def is_legal(state):
-    if 0 <= state[0] <= 3 and 0 <= state[1] <= 3:
-        return True
-    else:
-        return False
-def is_bank_safe(bank):
-    if bank[1] > bank[0] and bank[0] != 0:
-        return False
-    else:
-        return True
-def is_state_safe(state):
-    other_bank = [start[i]-state[i] for i in range(3)]
-    if is_bank_safe(state) and is_bank_safe(other_bank) :
-        return True
-    else:
-        return False
-def next_possible_actions(state):
-    actions = [[1,0,1],[0,1,1],[1,1,1],[2,0,1],[0,2,1]]
-    moves = []
-    for i in actions:
-        j = do_action(state,i)
-        if is_legal(j) and is_state_safe(j):
-            moves.append(j)
-    return moves
-solutions = []
-def solve(next_action,path):
-    _path = path.copy()
-    if next_action == end:
-        _path.append(next_action)
-        solutions.append(_path)
-        return
-    elif next_action in path:
-        return
-    else:
-        _path.append(next_action)
-        for i in next_possible_actions(next_action):
-            solve(i,_path)
-solve([3,3,1],[])
-print(*solutions,sep="\n\n\n")
+def solve(banana,box,height,monkey,hold):
+ if monkey==banana and height==1:
+ ans.append("Monkey took banana")
+ return True
+ if (banana,box,height,monkey,hold) in d:
+ return False
+ found=0
+ d[(banana,box,height,monkey,hold)]=1
+ options={1:"Move to box", 2:"Move to banana", 3:"Climb onto the
+box", 4:"Hold box to move"}
+ for option in options:
+ if option==1 and hold==0 and height==0 and
+solve(banana,box,height,box,hold):
+ ans.append(options[option])
+ found=1
+ break
+ elif option==2 and height==0 and ((hold==1 and
+solve(banana,banana,height,banana,hold)) or (hold==0 and
+solve(banana,box,height,banana,hold))):
+ ans.append(options[option])
+ found=1
+ break
+ elif option==3 and height==0 and monkey==box and
+solve(banana,box,height+1,monkey,0):
+ ans.append(options[option])
+ found=1
+ break
+ elif option==4 and height==0 and monkey==box and
+solve(banana,box,height,monkey,1):
+ ans.append(options[option])
+ found=1
+ break
+ return found
+n=int(input("Enter the size of the world: "))
+world=[[0]*n for i in range(n)]
+x,y=map(int,input("Enter tree position: ").split())
+world[x][y]=1
+x,y=map(int,input("Enter box position: ").split())
+world[x][y]=-1
+x,y=map(int,input("Enter monkey position: ").split())
+16
+for i in range(n):
+ for j in range(n):
+ if world[i][j]==1:
+ print(f"Monkey found the banana tree at ({i},{j})")
+ banana=(i,j)
+ if world[i][j]==-1:
+ print(f"Box found at ({i},{j})")
+ box=(i,j)
+d={}
+ans=[]
+solve(banana,box,0,(x,y),0)
+ans.reverse()
+print(*ans,sep="\n") 
