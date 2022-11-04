@@ -1,109 +1,33 @@
-from collections import deque
+
+from collections import defaultdict
+jug1, jug2, aim = 4, 3, 2
+visited = defaultdict(lambda: False)
+def waterJugSolver(amt1, amt2):
 
 
-def BFS(a, b, target):
-
-	# Map is used to store the states, every
-	# state is hashed to binary value to
-	# indicate either that state is visited
-	# before or not
-	m = {}
-	isSolvable = False
-	path = []
-
-	# Queue to maintain states
-	q = deque()
-
-	# Initialing with initial state
-	q.append((0, 0))
-
-	while (len(q) > 0):
-
-		# Current state
-		u = q.popleft()
-
-		# q.pop() #pop off used state
-
-		# If this state is already visited
-		if ((u[0], u[1]) in m):
-			continue
-
-		# Doesn't met jug constraints
-		if ((u[0] > a or u[1] > b or
-			u[0] < 0 or u[1] < 0)):
-			continue
-
-		# Filling the vector for constructing
-		# the solution path
-		path.append([u[0], u[1]])
-
-		# Marking current state as visited
-		m[(u[0], u[1])] = 1
-
-		# If we reach solution state, put ans=1
-		if (u[0] == target or u[1] == target):
-			isSolvable = True
-
-			if (u[0] == target):
-				if (u[1] != 0):
-
-					# Fill final state
-					path.append([u[0], 0])
-			else:
-				if (u[0] != 0):
-
-					# Fill final state
-					path.append([0, u[1]])
-
-			# Print the solution path
-			sz = len(path)
-			for i in range(sz):
-				print("(", path[i][0], ",",
-					path[i][1], ")")
-			break
-
-		# If we have not reached final state
-		# then, start developing intermediate
-		# states to reach solution state
-		q.append([u[0], b]) # Fill Jug2
-		q.append([a, u[1]]) # Fill Jug1
-
-		for ap in range(max(a, b) + 1):
-
-			# Pour amount ap from Jug2 to Jug1
-			c = u[0] + ap
-			d = u[1] - ap
-
-			# Check if this state is possible or not
-			if (c == a or (d == 0 and d >= 0)):
-				q.append([c, d])
-
-			# Pour amount ap from Jug 1 to Jug2
-			c = u[0] - ap
-			d = u[1] + ap
-
-			# Check if this state is possible or not
-			if ((c == 0 and c >= 0) or d == b):
-				q.append([c, d])
-
-		# Empty Jug2
-		q.append([a, 0])
-
-		# Empty Jug1
-		q.append([0, b])
-
-	# No, solution exists if ans=0
-	if (not isSolvable):
-		print("No solution")
+     if (amt1 == aim and amt2 == 0) or (amt2 == aim and amt1 == 0):
+         print(amt1, amt2)
+         return True
 
 
-# Driver code
-if __name__ == '__main__':
+     if visited[(amt1, amt2)] == False:
+        print(amt1, amt2)
 
-	Jug1, Jug2, target = 4, 3, 2
-	print("Path from initial state "
-		"to solution state ::")
+        visited[(amt1, amt2)] = True
 
-	BFS(Jug1, Jug2, target)
+        return (waterJugSolver(0, amt2) or
+           waterJugSolver(amt1, 0) or
+  waterJugSolver(jug1, amt2) or
+  waterJugSolver(amt1, jug2) or
+  waterJugSolver(amt1 + min(amt2, (jug1-amt1)),
+  amt2 - min(amt2, (jug1-amt1))) or
+  waterJugSolver(amt1 - min(amt1, (jug2-amt2)),
+ amt2 + min(amt1, (jug2-amt2))))
 
-# This code is contributed by mohit kumar 29
+     else:
+           return False
+
+print("Steps: ")
+
+waterJugSolver(0, 0)
+
